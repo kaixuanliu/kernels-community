@@ -248,12 +248,12 @@ jobs:
           $buildTomlPath = "$env:KERNEL_SOURCE\build.toml"
           if (Test-Path $buildTomlPath) {
             $content = Get-Content $buildTomlPath -Raw
-            if ($content -match '(?m)^\s*version\s*=\s*1\s*(\r)?$') {
-              Write-Host "Kernel version is 1, uploading to main branch..."
+            if ($content -match '(?m)^\s*version\s*=\s*1\s*(\r)?$' -and $content -notmatch '(?m)^\s*branch\s*=') {
+              Write-Host "Kernel version is 1 and no branch override, uploading to main branch..."
               & $KB upload "$env:KERNEL_SOURCE\build" --repo-type model --repo-id "kernels-community/$env:KERNEL_SOURCE" --branch main
               & $KB upload "$env:KERNEL_SOURCE\build" --repo-type kernel --repo-id "kernels-community/$env:KERNEL_SOURCE" --branch main
             } else {
-              Write-Host "Kernel version is not 1, skipping main branch upload"
+              Write-Host "Kernel version is not 1 or branch is overridden, skipping main branch upload"
             }
           } else {
             Write-Host "build.toml not found, skipping main branch upload"
